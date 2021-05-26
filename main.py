@@ -1,16 +1,26 @@
-# This is a sample Python script.
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+import os
+import pickle
+from UI_main_win import *
+from UI_show_plot_NeiMeng import *
+from PyQt5.QtWidgets import QApplication, QMainWindow
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["DEBUSSY"] = "1"
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+class MyWindow(QMainWindow, Ui_MainWindow):
+    def __init__(self, parent=None):
+        super(MyWindow, self).__init__(parent)
+        self.setupUi(self)
 
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    # 字体随分辨率自适应
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    app = QApplication(sys.argv)
+    myWin = MyWindow()
+    myWin.show()
+
+    sys.exit(app.exec_())

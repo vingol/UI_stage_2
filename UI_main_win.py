@@ -8,6 +8,7 @@
 
 import base64
 from UI_show_plot import *
+from UI_Wind_Process import *
 from UI_show_plot_NeiMeng import *
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from images.location_of_plants_in_jilin_png import img as location_of_plants_in_jilin
@@ -31,9 +32,9 @@ tmp = open('images/wind_plant_jilin.png', 'wb')  # 创建临时的文件
 tmp.write(base64.b64decode(wind_plant_jilin))  ##把这个one图片解码出来，写入文件中去。
 tmp.close()
 
-class MyWindow_show_plot(QMainWindow, Ui_MainWindow_show_plot):
+class MyWindow_wind_process(QMainWindow, Ui_MainWindow_wind_process):
     def __init__(self, parent=None):
-        super(MyWindow_show_plot, self).__init__(parent)
+        super(MyWindow_wind_process, self).__init__(parent)
         self.setupUi(self)
 
 class MyWindow_show_plot_NeiMeng(QMainWindow, Ui_MainWindow_show_plot_NeiMeng):
@@ -162,8 +163,6 @@ class PlotCanvas(FigureCanvas):
 
 class Ui_MainWindow(object):
 
-    signal = pyqtSignal(str)
-
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
@@ -256,7 +255,7 @@ class Ui_MainWindow(object):
         self.pushButton_2.clicked.connect(self.openfile)
         self.pushButton_2.clicked.connect(self.creat_table_show)
 
-        self.pushButton_3.clicked.connect(self.show_Window_show_plot)
+        self.pushButton_3.clicked.connect(self.show_UI_wind_process)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -276,29 +275,30 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "风电电站分布"))
         self.pushButton_2.setText(_translate("MainWindow", "电站基本信息"))
         self.pushButton_9.setText(_translate("MainWindow", "光伏电站分布"))
-        self.pushButton_3.setText(_translate("MainWindow", "时间序列数据查看"))
+        self.pushButton_3.setText(_translate("MainWindow", "风过程自动提取"))
         self.pushButton_4.setText(_translate("MainWindow", "云图数据查看"))
-        # self.pushButton_5.setText(_translate("MainWindow", "风电实时预测"))
-        # self.pushButton_7.setText(_translate("MainWindow", "光伏实时预测"))
-        # self.pushButton_6.setText(_translate("MainWindow", "风电预测统计"))
-        # self.pushButton_8.setText(_translate("MainWindow", "光伏预测统计"))
 
-    def show_Window_show_plot(self):
 
-        try:
+    def show_UI_wind_process(self):
 
-            if data_source == '吉林':
-                self.Window_show_plot = MyWindow_show_plot()
-                self.Window_show_plot.show()
+        self.Window_wind_process = MyWindow_wind_process()
+        self.Window_wind_process.show()
 
-            elif data_source == '内蒙':
-                self.Window_show_plot_NeiMeng = MyWindow_show_plot_NeiMeng()
-                self.Window_show_plot_NeiMeng.show()
 
-        except NameError:
-            self.Window_show_plot = MyWindow_show_plot()
-            self.Window_show_plot.show()
-
+    # def show_Window_show_plot(self):
+    #     try:
+    #
+    #         if data_source == '吉林':
+    #             self.Window_show_plot = MyWindow_show_plot()
+    #             self.Window_show_plot.show()
+    #
+    #         elif data_source == '内蒙':
+    #             self.Window_show_plot_NeiMeng = MyWindow_show_plot_NeiMeng()
+    #             self.Window_show_plot_NeiMeng.show()
+    #
+    #     except NameError:
+    #         self.Window_show_plot = MyWindow_show_plot()
+    #         self.Window_show_plot.show()
 
     def get_data_source(self, i):
 
@@ -307,9 +307,6 @@ class Ui_MainWindow(object):
 
         self.signal.emit(data_source)
 
-        import pickle
-        with open('main_win_data/data_source.pkl', 'wb') as f:
-            pickle.dump(data_source, f)
 
     def slot_solar(self):
         # self.graphicsView.setStyleSheet(
