@@ -174,9 +174,16 @@ class Ui_MainWindow_wind_process(object):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
+
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
-        self.textBrowser.setGeometry(QtCore.QRect(580, 470, 161, 51))
+        self.textBrowser.setGeometry(QtCore.QRect(580, 470, 161, 31))
         self.textBrowser.setObjectName("textBrowser")
+
+        # TODO
+        # 在之后的点击中将文字替换为要显示的精度等内容
+        self.textBrowser.setText('test')
+        self.textBrowser.setAlignment(QtCore.Qt.AlignCenter)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")

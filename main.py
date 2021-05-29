@@ -4,7 +4,6 @@
 import os
 import pickle
 from UI_main_win import *
-from UI_show_plot_NeiMeng import *
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"

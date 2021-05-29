@@ -6,11 +6,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-import base64
-from UI_show_plot import *
 from UI_Wind_Process import *
-from UI_show_plot_NeiMeng import *
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from UI_Wind_Confidence import *
+from UI_mode import *
 from images.location_of_plants_in_jilin_png import img as location_of_plants_in_jilin
 from images.wind_plant_jilin_png import img as wind_plant_jilin
 import pandas as pd
@@ -37,9 +35,14 @@ class MyWindow_wind_process(QMainWindow, Ui_MainWindow_wind_process):
         super(MyWindow_wind_process, self).__init__(parent)
         self.setupUi(self)
 
-class MyWindow_show_plot_NeiMeng(QMainWindow, Ui_MainWindow_show_plot_NeiMeng):
+class MyWindow_wind_Confidence(QMainWindow, Ui_MainWindow_Wind_Confidence):
     def __init__(self, parent=None):
-        super(MyWindow_show_plot_NeiMeng, self).__init__(parent)
+        super(MyWindow_Wind_Confidence, self).__init__(parent)
+        self.setupUi(self)
+
+class MyWindow_mode(QMainWindow, Ui_MainWindow_mode):
+    def __init__(self, parent=None):
+        super(MyWindow_mode, self).__init__(parent)
         self.setupUi(self)
 
 class PlotCanvas(FigureCanvas):
@@ -69,6 +72,7 @@ class PlotCanvas(FigureCanvas):
         # self.init_plot()#打开App时可以初始化图片
         # self.plot()
 
+
     def update_figure_1(self, points, result, map_img, title):
 
 
@@ -85,17 +89,6 @@ class PlotCanvas(FigureCanvas):
 
         self.ax1.set_title(title)
         self.ax1.set_ylim([800, 400])
-        # self.ax1.set_xlim([1200, 1900])
-
-        # ax0.set_xlim([0, 1500])
-        # ax1.set_xticks(range(2400, 4200, 200))
-        # x_ticks_ = np.arange(1200, 2100, 100)
-        # ax1.set_xticklabels(x_ticks_, rotation=0, fontsize=8)
-        #
-        # ax0.set_ylim([0, 1000])
-        # ax1.set_yticks(range(900, 1700, 100))
-        # y_ticks_ = np.arange(900, 1700, 100)
-        # ax1.set_yticklabels(y_ticks_, rotation=0, fontsize=8)
 
         self.ax1.set_xlabel('km')
         self.ax1.set_ylabel('km')
@@ -104,37 +97,19 @@ class PlotCanvas(FigureCanvas):
         self.draw()
 
     def update_figure_2(self, points, result, map_img, title):
-        # self.axes.cla()
-        #
-        # self.axes.imshow(map_img)
-        # X = list(map(lambda x: x[1], points))
-        # Y = list(map(lambda x: x[0], points))
-        #
-        # self.axes.scatter(X, Y)
-        #
-        # for j in range(len(X)):
-        #     self.axes.annotate(result[j] + 1, xy=(X[j], Y[j]), xytext=(X[j] + 0.01, Y[j] + 0.01))
-        #
-        # self.axes.set_title(title)
-        #
-        # self.axes.set_xlabel('km')
-        # self.axes.set_ylabel('km')
+
 
         rect = [0.15, 0.15, 0.75, 0.75]
         # #     scatterMarkers = ['s', 'o', '^', '8','p', 'd', 'v', 'h', '<', ">"]
         axprops = dict(xticks=[], yticks=[])
-        # ax0 = self.fig.add_axes(rect, label='ax0', **axprops)
 
         ax2 = self.fig.add_axes(rect, label='ax0', **axprops)
         ax2.imshow(map_img)
 
 
-        # self.ax1 = self.fig.add_axes(rect, label='ax1', frameon=False)
-
         self.ax1.cla()
         self.ax1 = self.fig.add_axes(rect, label='ax1', frameon=False)
 
-        #     markerStyle = scatterMarkers[random.randint(1,6)%len(scatterMarkers)]
         X = list(map(lambda x: x[1], points))
         Y = list(map(lambda x: x[0], points))
 
@@ -144,17 +119,6 @@ class PlotCanvas(FigureCanvas):
             self.ax1.annotate(result[j] + 1, xy=(X[j], Y[j]), xytext=(X[j] + 0.01, Y[j] + 0.01))
 
         self.ax1.set_title(title)
-        # ax1.set_ylim([800, 400])
-
-        # ax0.set_xlim([0, 1500])
-        # ax1.set_xticks(range(2400, 4200, 200))
-        # x_ticks_ = np.arange(1200, 2100, 100)
-        # ax1.set_xticklabels(x_ticks_, rotation=0, fontsize=8)
-        #
-        # ax0.set_ylim([0, 1000])
-        # ax1.set_yticks(range(900, 1700, 100))
-        # y_ticks_ = np.arange(900, 1700, 100)
-        # ax1.set_yticklabels(y_ticks_, rotation=0, fontsize=8)
 
         self.ax1.set_xlabel('km')
         self.ax1.set_ylabel('km')
@@ -189,12 +153,6 @@ class Ui_MainWindow(object):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
-        # self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
-        # self.graphicsView.setGeometry(QtCore.QRect(50, 150, 400, 300))
-        # self.graphicsView.setMinimumSize(QtCore.QSize(400, 300))
-        # self.graphicsView.setMaximumSize(QtCore.QSize(400, 300))
-        # self.graphicsView.setStyleSheet("border-image: url(:/location/location_of_plants_in_jilin.png);")
-        # self.graphicsView.setObjectName("graphicsView")
 
         self.m = PlotCanvas(self, width=4, height=3)  # 实例化一个画布对象
         self.m.move(50, 150)
@@ -224,18 +182,32 @@ class Ui_MainWindow(object):
         self.pushButton_9 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_9.setGeometry(QtCore.QRect(260, 90, 151, 41))
         self.pushButton_9.setObjectName("pushButton_9")
-        self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(490, 440, 281, 100))
-        self.widget.setObjectName("widget")
-        self.gridLayout = QtWidgets.QGridLayout(self.widget)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout.setObjectName("gridLayout")
-        self.pushButton_3 = QtWidgets.QPushButton(self.widget)
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.gridLayout.addWidget(self.pushButton_3, 2, 0, 1, 1)
-        self.pushButton_4 = QtWidgets.QPushButton(self.widget)
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.gridLayout.addWidget(self.pushButton_4, 2, 1, 1, 1)
+
+        # self.widget = QtWidgets.QWidget(self.centralwidget)
+        # self.widget.setGeometry(QtCore.QRect(490, 440, 281, 100))
+        # self.widget.setObjectName("widget")
+        # self.gridLayout = QtWidgets.QGridLayout(self.widget)
+        # self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        # self.gridLayout.setObjectName("gridLayout")
+        #
+        # self.pushButton_3 = QtWidgets.QPushButton(self.widget)
+        # self.pushButton_3.setObjectName("pushButton_3")
+        # self.gridLayout.addWidget(self.pushButton_3, 2, 0, 1, 1)
+        # self.pushButton_4 = QtWidgets.QPushButton(self.widget)
+        # self.pushButton_4.setObjectName("pushButton_4")
+        # self.gridLayout.addWidget(self.pushButton_4, 2, 1, 1, 1)
+
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(640, 470, 151, 41))
+        self.pushButton_3.setObjectName("pushButton_9")
+
+        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_4.setGeometry(QtCore.QRect(490, 470, 151, 41))
+        self.pushButton_4.setObjectName("pushButton_9")
+
+        self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_5.setGeometry(QtCore.QRect(490, 510, 151, 41))
+        self.pushButton_5.setObjectName("pushButton_9")
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -252,10 +224,12 @@ class Ui_MainWindow(object):
         self.pushButton.clicked.connect(self.slot_wind)
         self.pushButton_9.clicked.connect(self.slot_solar)
 
-        self.pushButton_2.clicked.connect(self.openfile)
+        # self.pushButton_2.clicked.connect(self.openfile)
         self.pushButton_2.clicked.connect(self.creat_table_show)
 
         self.pushButton_3.clicked.connect(self.show_UI_wind_process)
+        self.pushButton_4.clicked.connect(self.show_UI_wind_Confidence)
+        self.pushButton_5.clicked.connect(self.show_UI_mode)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -276,7 +250,9 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "电站基本信息"))
         self.pushButton_9.setText(_translate("MainWindow", "光伏电站分布"))
         self.pushButton_3.setText(_translate("MainWindow", "风过程自动提取"))
-        self.pushButton_4.setText(_translate("MainWindow", "云图数据查看"))
+        self.pushButton_4.setText(_translate("MainWindow", "波动预警的置信度"))
+        self.pushButton_5.setText(_translate("MainWindow", "上下游关联模式识别"))
+        # self.pushButton_6.setText(_translate("MainWindow", "波动预警的置信度"))
 
 
     def show_UI_wind_process(self):
@@ -285,20 +261,16 @@ class Ui_MainWindow(object):
         self.Window_wind_process.show()
 
 
-    # def show_Window_show_plot(self):
-    #     try:
-    #
-    #         if data_source == '吉林':
-    #             self.Window_show_plot = MyWindow_show_plot()
-    #             self.Window_show_plot.show()
-    #
-    #         elif data_source == '内蒙':
-    #             self.Window_show_plot_NeiMeng = MyWindow_show_plot_NeiMeng()
-    #             self.Window_show_plot_NeiMeng.show()
-    #
-    #     except NameError:
-    #         self.Window_show_plot = MyWindow_show_plot()
-    #         self.Window_show_plot.show()
+    def show_UI_wind_Confidence(self):
+
+        self.Window_wind_Confidence = MyWindow_Wind_Confidence()
+        self.Window_wind_Confidence.show()
+
+    def show_UI_mode(self):
+
+        self.Window_mode = MyWindow_mode()
+        self.Window_mode.show()
+
 
     def get_data_source(self, i):
 
@@ -355,41 +327,18 @@ class Ui_MainWindow(object):
         except OSError:
             pass
 
-    def openfile(self):
-
-        # 获取路径===================================================================
-
-        # openfile_name = QFileDialog.getOpenFileName(
-        #     self, '选择文件', '', 'Excel files(*.xlsx , *.xls)')
-        #
-        # # print(openfile_name)
-        global path_openfile_name
-
-        # 获取路径====================================================================
-        # if len(path_openfile_name) > 0:
-        #     path_openfile_name = openfile_name[0]
-        # else:
-        path_openfile_name = 'table_info.xlsx'
-
-        # _translate = QtCore.QCoreApplication.translate
-        # self.dir_data_1.setText(_translate("MainWindow", path_openfile_name))
-
     def creat_table_show(self):
         # ===========读取表格，转换表格，===========================================
         # TODO
         # 修改表格具体信息
-        if len(path_openfile_name) > 0:
-            print('get def creat', path_openfile_name)
+        try:
             # input_table = pd.read_excel('table_info.xlsx', sheet_name='Sheet1')
             input_table = pd.read_excel('main_win_data/table_info_new.xlsx', sheet_name='info')
             print('readtablesucess')
-            # print(input_table)
+
             input_table_rows = input_table.shape[0]
             input_table_colunms = input_table.shape[1]
-            # print(input_table_rows)
-            # print(input_table_colunms)
             input_table_header = input_table.columns.values.tolist()
-            # print(input_table_header)
 
             # ===========读取表格，转换表格，============================================
             # ======================给tablewidget设置行列表头============================
@@ -420,10 +369,12 @@ class Ui_MainWindow(object):
                     newItem = QTableWidgetItem(input_table_items)
                     newItem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
                     self.tableWidget.setItem(i, j, newItem)
+        except NameError:
+            pass
 
-        # ================遍历表格每个元素，同时添加到tablewidget中========================
-        else:
-            self.centralWidget.show()
+        # # ================遍历表格每个元素，同时添加到tablewidget中========================
+        # else:
+        #     self.centralWidget.show()
 
 
 
