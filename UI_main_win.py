@@ -7,10 +7,10 @@
 # WARNING! All changes made in this file will be lost!
 
 from UI_Wind_Process import *
+from UI_solar_process import *
 from UI_Wind_Confidence import *
+from UI_solar_confidece import *
 from UI_mode import *
-from images.location_of_plants_in_jilin_png import img as location_of_plants_in_jilin
-from images.wind_plant_jilin_png import img as wind_plant_jilin
 import pandas as pd
 import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -22,22 +22,32 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 plt.rcParams["font.family"]="SimHei"
 
-tmp = open('images/location_of_plants_in_jilin.png', 'wb')  # 创建临时的文件
-tmp.write(base64.b64decode(location_of_plants_in_jilin))  ##把这个one图片解码出来，写入文件中去。
-tmp.close()
-
-tmp = open('images/wind_plant_jilin.png', 'wb')  # 创建临时的文件
-tmp.write(base64.b64decode(wind_plant_jilin))  ##把这个one图片解码出来，写入文件中去。
-tmp.close()
+# tmp = open('images/location_of_plants_in_jilin.png', 'wb')  # 创建临时的文件
+# tmp.write(base64.b64decode(location_of_plants_in_jilin))  ##把这个one图片解码出来，写入文件中去。
+# tmp.close()
+#
+# tmp = open('images/wind_plant_jilin.png', 'wb')  # 创建临时的文件
+# tmp.write(base64.b64decode(wind_plant_jilin))  ##把这个one图片解码出来，写入文件中去。
+# tmp.close()
 
 class MyWindow_wind_process(QMainWindow, Ui_MainWindow_wind_process):
     def __init__(self, parent=None):
         super(MyWindow_wind_process, self).__init__(parent)
         self.setupUi(self)
 
+class MyWindow_solar_process(QMainWindow, Ui_MainWindow_solar_process):
+    def __init__(self, parent=None):
+        super(MyWindow_solar_process, self).__init__(parent)
+        self.setupUi(self)
+
 class MyWindow_wind_Confidence(QMainWindow, Ui_MainWindow_Wind_Confidence):
     def __init__(self, parent=None):
         super(MyWindow_Wind_Confidence, self).__init__(parent)
+        self.setupUi(self)
+
+class MyWindow_solar_confidence(QMainWindow, Ui_MainWindow_solar_confidence):
+    def __init__(self, parent=None):
+        super(MyWindow_solar_confidence, self).__init__(parent)
         self.setupUi(self)
 
 class MyWindow_mode(QMainWindow, Ui_MainWindow_mode):
@@ -136,6 +146,7 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(30, 20, 731, 31))
         self.label.setObjectName("label")
+
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setGeometry(QtCore.QRect(0, 60, 879, 3))
         self.line.setFrameShadow(QtWidgets.QFrame.Plain)
@@ -145,9 +156,15 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(80, 90, 151, 41))
         self.pushButton.setObjectName("pushButton")
+        font_PB = QtGui.QFont()
+        font_PB.setPointSize(15)
+        self.pushButton.setFont(font_PB)
+
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(560, 160, 151, 41))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.setFont(font_PB)
+
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.setGeometry(QtCore.QRect(500, 210, 256, 241))
         self.tableWidget.setObjectName("tableWidget")
@@ -165,6 +182,10 @@ class Ui_MainWindow(object):
 
         self.label_choose_dataset = QtWidgets.QLabel(self.layoutWidget1)
         self.label_choose_dataset.setObjectName("选择数据源：")
+        font_label = QtGui.QFont()
+        font_label.setPointSize(12)
+        self.label_choose_dataset.setFont(font_label)
+
         # self.horizontalLayout.addWidget(self.label_choose_dataset)
 
         self.layoutWidget2 = QtWidgets.QWidget(self.centralwidget)
@@ -182,32 +203,22 @@ class Ui_MainWindow(object):
         self.pushButton_9 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_9.setGeometry(QtCore.QRect(260, 90, 151, 41))
         self.pushButton_9.setObjectName("pushButton_9")
-
-        # self.widget = QtWidgets.QWidget(self.centralwidget)
-        # self.widget.setGeometry(QtCore.QRect(490, 440, 281, 100))
-        # self.widget.setObjectName("widget")
-        # self.gridLayout = QtWidgets.QGridLayout(self.widget)
-        # self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        # self.gridLayout.setObjectName("gridLayout")
-        #
-        # self.pushButton_3 = QtWidgets.QPushButton(self.widget)
-        # self.pushButton_3.setObjectName("pushButton_3")
-        # self.gridLayout.addWidget(self.pushButton_3, 2, 0, 1, 1)
-        # self.pushButton_4 = QtWidgets.QPushButton(self.widget)
-        # self.pushButton_4.setObjectName("pushButton_4")
-        # self.gridLayout.addWidget(self.pushButton_4, 2, 1, 1, 1)
+        self.pushButton_9.setFont(font_PB)
 
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(640, 470, 151, 41))
-        self.pushButton_3.setObjectName("pushButton_9")
+        self.pushButton_3.setGeometry(QtCore.QRect(530, 460, 200, 41))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_3.setFont(font_PB)
 
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(490, 470, 151, 41))
-        self.pushButton_4.setObjectName("pushButton_9")
+        self.pushButton_4.setGeometry(QtCore.QRect(530, 510, 200, 41))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.pushButton_4.setFont(font_PB)
 
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_5.setGeometry(QtCore.QRect(490, 510, 151, 41))
-        self.pushButton_5.setObjectName("pushButton_9")
+        self.pushButton_5.setGeometry(QtCore.QRect(530, 560, 200, 41))
+        self.pushButton_5.setObjectName("pushButton_5")
+        self.pushButton_5.setFont(font_PB)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -219,7 +230,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.comboBox_station.currentIndexChanged[str].connect(
-            self.get_data_source)  # 条目发生改变，发射信号，传递条目内容
+            self.get_data_type)  # 条目发生改变，发射信号，传递条目内容
 
         self.pushButton.clicked.connect(self.slot_wind)
         self.pushButton_9.clicked.connect(self.slot_solar)
@@ -227,8 +238,8 @@ class Ui_MainWindow(object):
         # self.pushButton_2.clicked.connect(self.openfile)
         self.pushButton_2.clicked.connect(self.creat_table_show)
 
-        self.pushButton_3.clicked.connect(self.show_UI_wind_process)
-        self.pushButton_4.clicked.connect(self.show_UI_wind_Confidence)
+        self.pushButton_3.clicked.connect(self.show_UI_process)
+        self.pushButton_4.clicked.connect(self.show_UI_Confidence)
         self.pushButton_5.clicked.connect(self.show_UI_mode)
 
         self.retranslateUi(MainWindow)
@@ -243,47 +254,59 @@ class Ui_MainWindow(object):
         self.label_choose_dataset.setText(_translate("MainWindow",
                                         "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">数据源：</span></p></body></html>"))
 
-        self.comboBox_station.setItemText(1, _translate("MainWindow", "吉林"))
-        self.comboBox_station.setItemText(2, _translate("MainWindow", "内蒙"))
+        self.comboBox_station.setItemText(1, _translate("MainWindow", "风电"))
+        self.comboBox_station.setItemText(2, _translate("MainWindow", "光伏"))
 
         self.pushButton.setText(_translate("MainWindow", "风电电站分布"))
+        self.pushButton.setStyleSheet("QPushButton{font - family: '宋体';font - size: 12px;color: rgb(0, 0, 0, 255);}")
         self.pushButton_2.setText(_translate("MainWindow", "电站基本信息"))
         self.pushButton_9.setText(_translate("MainWindow", "光伏电站分布"))
-        self.pushButton_3.setText(_translate("MainWindow", "风过程自动提取"))
+        self.pushButton_3.setText(_translate("MainWindow", "特征自动提取"))
         self.pushButton_4.setText(_translate("MainWindow", "波动预警的置信度"))
         self.pushButton_5.setText(_translate("MainWindow", "上下游关联模式识别"))
         # self.pushButton_6.setText(_translate("MainWindow", "波动预警的置信度"))
 
+    def get_data_type(self, i):
 
-    def show_UI_wind_process(self):
+        global data_type
+        data_type = i
 
-        self.Window_wind_process = MyWindow_wind_process()
-        self.Window_wind_process.show()
+    def show_UI_process(self):
 
+        try:
+            if data_type == '风电':
+                self.Window_wind_process = MyWindow_wind_process()
+                self.Window_wind_process.show()
+            elif data_type == '光伏':
+                self.Window_solar_process = MyWindow_solar_process()
+                self.Window_solar_process.show()
+        except NameError:
+            self.Window_wind_process = MyWindow_wind_process()
+            self.Window_wind_process.show()
 
-    def show_UI_wind_Confidence(self):
+    def show_UI_Confidence(self):
 
-        self.Window_wind_Confidence = MyWindow_Wind_Confidence()
-        self.Window_wind_Confidence.show()
+        try:
+            if data_type == '风电':
+                self.Window_wind_Confidence = MyWindow_Wind_Confidence()
+                self.Window_wind_Confidence.show()
+            elif data_type == '光伏':
+                self.Window_solar_confidence = MyWindow_solar_confidence()
+                self.Window_solar_confidence.show()
+        except NameError:
+            self.Window_wind_Confidence = MyWindow_Wind_Confidence()
+            self.Window_wind_Confidence.show()
 
     def show_UI_mode(self):
 
         self.Window_mode = MyWindow_mode()
         self.Window_mode.show()
 
-
-    def get_data_source(self, i):
-
-        global data_source
-        data_source = i
-
-        self.signal.emit(data_source)
-
-
     def slot_solar(self):
         # self.graphicsView.setStyleSheet(
         #     "image: url(location_of_plants_in_jilin.png);\n"
         #     "border-image: url(location_of_plants_in_jilin.png);")
+        data_source = '吉林'
         try:
             if data_source == '吉林':
                 filename_data_source = 'data_source_JILIN'
@@ -305,6 +328,7 @@ class Ui_MainWindow(object):
 
     def slot_wind(self):
 
+        data_source = '吉林'
         try:
             if data_source == '吉林':
                 filename_data_source = 'data_source_JILIN'
