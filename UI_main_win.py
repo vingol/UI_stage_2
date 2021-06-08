@@ -7,10 +7,11 @@
 # WARNING! All changes made in this file will be lost!
 
 from UI_Wind_Process import *
-from UI_solar_process import *
+from UI_Solar_Process import *
 from UI_Wind_Confidence import *
-from UI_solar_confidece import *
-from UI_mode import *
+from UI_Solar_Confidece import *
+from UI_Wind_Corr import *
+from UI_Solar_Corr import *
 import pandas as pd
 import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -40,9 +41,9 @@ class MyWindow_solar_process(QMainWindow, Ui_MainWindow_solar_process):
         super(MyWindow_solar_process, self).__init__(parent)
         self.setupUi(self)
 
-class MyWindow_wind_Confidence(QMainWindow, Ui_MainWindow_Wind_Confidence):
+class MyWindow_wind_confidence(QMainWindow, Ui_MainWindow_wind_confidence):
     def __init__(self, parent=None):
-        super(MyWindow_Wind_Confidence, self).__init__(parent)
+        super(MyWindow_wind_confidence, self).__init__(parent)
         self.setupUi(self)
 
 class MyWindow_solar_confidence(QMainWindow, Ui_MainWindow_solar_confidence):
@@ -50,9 +51,14 @@ class MyWindow_solar_confidence(QMainWindow, Ui_MainWindow_solar_confidence):
         super(MyWindow_solar_confidence, self).__init__(parent)
         self.setupUi(self)
 
-class MyWindow_mode(QMainWindow, Ui_MainWindow_mode):
+class MyWindow_wind_corr(QMainWindow, Ui_MainWindow_wind_corr):
     def __init__(self, parent=None):
-        super(MyWindow_mode, self).__init__(parent)
+        super(MyWindow_wind_corr, self).__init__(parent)
+        self.setupUi(self)
+
+class MyWindow_solar_corr(QMainWindow, Ui_MainWindow_solar_corr):
+    def __init__(self, parent=None):
+        super(MyWindow_solar_corr, self).__init__(parent)
         self.setupUi(self)
 
 class PlotCanvas(FigureCanvas):
@@ -105,6 +111,28 @@ class PlotCanvas(FigureCanvas):
 
 
         self.draw()
+    def update_figure_wind(self, points, result, map_img, title):
+
+
+
+        #     markerStyle = scatterMarkers[random.randint(1,6)%len(scatterMarkers)]
+        X = list(map(lambda x: x[1], points))
+        Y = list(map(lambda x: x[0], points))
+
+        self.ax1.cla()
+        self.ax1.scatter(X, Y, s = 8)
+
+        for j in range(len(X)):
+            self.ax1.annotate(result[j] + 1, xy=(X[j], Y[j]), xytext=(X[j] + 0.2, Y[j] - 0.2),  size=8)
+
+        self.ax1.set_title(title)
+        self.ax1.set_ylim([800, 400])
+
+        self.ax1.set_xlabel('km')
+        self.ax1.set_ylabel('km')
+
+
+        self.draw()
 
     def update_figure_2(self, points, result, map_img, title):
 
@@ -140,7 +168,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(800, 650)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -240,7 +268,7 @@ class Ui_MainWindow(object):
 
         self.pushButton_3.clicked.connect(self.show_UI_process)
         self.pushButton_4.clicked.connect(self.show_UI_Confidence)
-        self.pushButton_5.clicked.connect(self.show_UI_mode)
+        self.pushButton_5.clicked.connect(self.show_UI_corr)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -250,7 +278,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow",
-                                      "<html><head/><body><p><span style=\" font-size:24pt;\">风光超短期预测基础数据平台</span></p><p><br/></p></body></html>"))
+                                      "<html><head/><body><p><span style=\" font-size:24pt;\">风光超短期预测资源关联特征挖掘模块</span></p><p><br/></p></body></html>"))
         self.label_choose_dataset.setText(_translate("MainWindow",
                                         "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">数据源：</span></p></body></html>"))
 
@@ -287,20 +315,30 @@ class Ui_MainWindow(object):
     def show_UI_Confidence(self):
 
         try:
+
             if data_type == '风电':
-                self.Window_wind_Confidence = MyWindow_Wind_Confidence()
+                self.Window_wind_Confidence = MyWindow_wind_confidence()
                 self.Window_wind_Confidence.show()
             elif data_type == '光伏':
                 self.Window_solar_confidence = MyWindow_solar_confidence()
                 self.Window_solar_confidence.show()
         except NameError:
-            self.Window_wind_Confidence = MyWindow_Wind_Confidence()
+            self.Window_wind_Confidence = MyWindow_wind_confidence()
             self.Window_wind_Confidence.show()
 
-    def show_UI_mode(self):
+    def show_UI_corr(self):
 
-        self.Window_mode = MyWindow_mode()
-        self.Window_mode.show()
+        try:
+            if data_type == '风电':
+                self.Window_wind_corr = MyWindow_wind_corr()
+                self.Window_wind_corr.show()
+            elif data_type == '光伏':
+                self.Window_solar_confidence = MyWindow_solar_corr()
+                self.Window_solar_confidence.show()
+        except NameError:
+            self.Window_wind_corr = MyWindow_wind_corr()
+            self.Window_wind_corr.show()
+
 
     def slot_solar(self):
         # self.graphicsView.setStyleSheet(
@@ -339,15 +377,15 @@ class Ui_MainWindow(object):
 
         try:
             import pickle
-            f = open('main_win_data/'+filename_data_source+'/pixel_pos_wind.pkl', 'rb')
+            f = open('main_win_data/'+filename_data_source+'/pixel_pos_wind_new.pkl', 'rb')
             points_wind = pickle.load(f)
             f.close()
 
             map_image = plt.imread('main_win_data/'+filename_data_source+'/map_img.png')
 
             title = "风电电站分布"
-            result_solar = np.arange(0, 20)
-            self.m.update_figure_1(np.array(points_wind) / 2, result_solar, map_image, title)
+            result_solar = np.arange(0, 6)
+            self.m.update_figure_wind(np.array(points_wind) / 2, result_solar, map_image, title)
         except OSError:
             pass
 
@@ -358,7 +396,7 @@ class Ui_MainWindow(object):
         try:
             # input_table = pd.read_excel('table_info.xlsx', sheet_name='Sheet1')
             input_table = pd.read_excel('main_win_data/table_info_new.xlsx', sheet_name='info')
-            print('readtablesucess')
+            # print('readtablesucess')
 
             input_table_rows = input_table.shape[0]
             input_table_colunms = input_table.shape[1]

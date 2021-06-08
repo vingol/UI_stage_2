@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 
 import os
-import pickle
 from UI_main_win import *
 from PyQt5.QtWidgets import QApplication, QMainWindow
 

@@ -17,10 +17,12 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-from sklearn import preprocessing
 import matplotlib
 
-from show_cloudimage import Cloud_image, load_image, name_to_time, time_to_name_pkl, is_in_cloud, search_points, cloud_move
+import warnings
+warnings.filterwarnings("ignore")
+
+plt.rcParams["font.family"]="SimHei"
 
 class PlotCanvas(FigureCanvas):
 
@@ -55,20 +57,21 @@ class PlotCanvas(FigureCanvas):
         import matplotlib.pyplot as plt
         matplotlib.use('Agg')
         # fig, ax = plt.subplots(figsize=(10, 5))
-        self.axes.scatter(Location[:, 0], Location[:, 1], label='Wind Farms', linewidth=2)
-        self.axes.scatter(Location[:, 0] + 0.04, Location[:, 1] + 0.03, color=[], marker='o', edgecolors='#1f77b4',
+        self.axes.scatter(Location[:, 1], Location[:, 0], label='风电场', linewidth=2)
+        self.axes.scatter(Location[:, 1] + 0.04, Location[:, 0] + 0.03, color=[], marker='o', edgecolors='#1f77b4',
                    s=300)  # 把 corlor 设置为空，通过edgecolors来控制颜色
         for i in range(Location.shape[0]):
-            self.axes.text(Location[i, 0] + 0.0355, Location[i, 1] + 0.0225, str(i + 1), fontsize=11, weight='bold',
+            self.axes.text(Location[i, 1] + 0.0355, Location[i, 0] + 0.0225, str(i + 1), fontsize=11, weight='bold',
                     color='#1f77b4')
         font_label = {'family': 'Times New Roman','weight': 'normal','size' : 8,}
 
-        self.axes.set(xlabel='Longitude(' + '$^{o}$' + ')', ylabel='Latitude(' + '$^{o}$' + ')')
+        self.axes.set(xlabel='经度(' + '$^{o}$' + ')', ylabel='纬度(' + '$^{o}$' + ')')
         # plt.grid()
         # plt.show()
-        self.axes.legend(loc='upper left')
+        self.axes.legend(loc='lower right')
         self.axes.tick_params(labelsize=8)
-        self.axes.set_ylim([105.8,107])
+        self.axes.set_ylim([36.5,37.5])
+        self.axes.set_xlim([105.8,106.8])
         self.draw()
         # plt.savefig('Location.svg')
 
@@ -78,63 +81,31 @@ class PlotCanvas(FigureCanvas):
         ## 画完后的图像
         import matplotlib.pyplot as plt
         # fig, self.axes = plt.subplots(figsize=(10, 5))
-        self.axes.scatter(Location[Other_Farms, 0], Location[Other_Farms, 1], label='Other Farms', linewidth=2)
-        self.axes.scatter(Location[Other_Farms, 0] + 0.04, Location[Other_Farms, 1] + 0.03, color=[], marker='o',
+        self.axes.scatter(Location[Other_Farms, 1], Location[Other_Farms, 0], label='其他风电场', linewidth=2)
+        self.axes.scatter(Location[Other_Farms, 1] + 0.04, Location[Other_Farms, 0] + 0.03, color=[], marker='o',
                    edgecolors='#1f77b4', s=300)  # 把 corlor 设置为空，通过edgecolors来控制颜色
         for i in range(len(Other_Farms)):
-            self.axes.text(Location[Other_Farms[i], 0] + 0.0355, Location[Other_Farms[i], 1] + 0.0225,
+            self.axes.text(Location[Other_Farms[i], 1] + 0.0355, Location[Other_Farms[i], 0] + 0.0225,
                     str(Other_Farms[i] + 1), fontsize=11, weight='bold', color='#1f77b4')
 
-        self.axes.scatter(Location[Farm_for_target, 0], Location[Farm_for_target, 1], label='Targeted Farm', linewidth=2)
-        self.axes.scatter(Location[Farm_for_target, 0] + 0.04, Location[Farm_for_target, 1] + 0.03, color=[], marker='o',
+        self.axes.scatter(Location[Farm_for_target, 1], Location[Farm_for_target, 0], label='目标风电场', linewidth=2)
+        self.axes.scatter(Location[Farm_for_target, 1] + 0.04, Location[Farm_for_target, 0] + 0.03, color=[], marker='o',
                    edgecolors='#ff7f0e', s=300)  # 把 corlor 设置为空，通过edgecolors来控制颜色
-        self.axes.text(Location[Farm_for_target, 0] + 0.0355, Location[Farm_for_target, 1] + 0.0225,
+        self.axes.text(Location[Farm_for_target, 1] + 0.0355, Location[Farm_for_target, 0] + 0.0225,
                 str(Farm_for_target + 1), fontsize=11, weight='bold', color='#ff7f0e')
 
-        self.axes.scatter(Location[Final_Farm, 0], Location[Final_Farm, 1], label='Correlated Farm', linewidth=2)
-        self.axes.scatter(Location[Final_Farm, 0] + 0.04, Location[Final_Farm, 1] + 0.03, color=[], marker='o',
+        self.axes.scatter(Location[Final_Farm, 1], Location[Final_Farm, 0], label='关联风电场', linewidth=2)
+        self.axes.scatter(Location[Final_Farm, 1] + 0.04, Location[Final_Farm, 0] + 0.03, color=[], marker='o',
                    edgecolors='#2ca02c', s=300)  # 把 corlor 设置为空，通过edgecolors来控制颜色
-        self.axes.text(Location[Final_Farm, 0] + 0.0355, Location[Final_Farm, 1] + 0.0225, str(Final_Farm + 1),
+        self.axes.text(Location[Final_Farm, 1] + 0.0355, Location[Final_Farm, 0] + 0.0225, str(Final_Farm + 1),
                 fontsize=11, weight='bold', color='#2ca02c')
-        self.axes.set(xlabel='Longitude(' + '$^{o}$' + ')', ylabel='Latitude(' + '$^{o}$' + ')')
+        self.axes.set(xlabel='经度(' + '$^{o}$' + ')', ylabel='纬度(' + '$^{o}$' + ')')
         # plt.grid()
         # plt.show()
-        self.axes.legend(loc='upper left')
-        self.axes.set_ylim([105.8, 107])
+        self.axes.legend(loc='lower right')
+        self.axes.set_ylim([36.5,37.5])
+        self.axes.set_xlim([105.8, 106.8])
         # plt.savefig('Processed.svg')
-        self.draw()
-
-    def show_image(self, inputs):
-
-        self.axes.cla()
-
-        print('runnning show_image')
-
-        im1, target, points, df_v = inputs
-
-        print('im1:', im1.dst)
-        print('target:', target)
-        print('points:', points)
-        print('df_v:', df_v)
-
-        self.axes.imshow(im1.dst, cmap='gray')
-
-        print('showed image theorically')
-
-        self.axes.scatter(target[1], target[0], s=40, c='r', marker='*')
-
-        for theta in points:
-            self.axes.scatter(points[theta][1], points[theta][0], c='y', s=5)
-
-            self.axes.arrow(points[theta][1], points[theta][0], df_v.loc[theta][1] * 20, df_v.loc[theta][0] * 20,
-                      length_includes_head=True, color='r',
-                      head_width=2, head_length=4, fc='#e87a59', ec='#e87a59')
-
-        # ax1.set_xlabel('像素(500m)')
-        # ax1.set_ylabel('像素(500m)')
-        self.axes.set_xticks([])
-        self.axes.set_yticks([])
-
         self.draw()
 
 
@@ -169,6 +140,11 @@ class Ui_MainWindow_wind_corr(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
 
+        # self.tableWidget.setColumnWidth(0, 80)
+        # self.tableWidget.setColumnWidth(1, 80)
+        # self.tableWidget.setColumnWidth(2, 200)
+        # self.tableWidget.setColumnWidth(3, 200)
+
         # 画布
         self.m = PlotCanvas(self, width=6, height=3)  # 实例化一个画布对象
         self.m.move(30, 100)
@@ -185,9 +161,11 @@ class Ui_MainWindow_wind_corr(object):
         self.label_time.setAlignment(QtCore.Qt.AlignCenter)
         self.label_time.setObjectName("label_time")
         self.gridLayout.addWidget(self.label_time, 0, 0, 1, 1)
+
         self.dateTimeEdit = QtWidgets.QDateTimeEdit(self.widget)
         self.dateTimeEdit.setObjectName("dateTimeEdit")
         self.dateTimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 10, 1), QtCore.QTime(0, 0, 0)))
+
         self.gridLayout.addWidget(self.dateTimeEdit, 0, 1, 1, 1)
         self.label_station = QtWidgets.QLabel(self.widget)
         font = QtGui.QFont()
@@ -306,9 +284,9 @@ class Ui_MainWindow_wind_corr(object):
                                         "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">选择电站：</span></p></body></html>"))
         # self.dateTimeEdit_end.setDisplayFormat(_translate("MainWindow", "yyyy/MM/dd HH-mm-ss"))
         self.label_error1.setText(_translate("MainWindow",
-                                              "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">Error_Lag：</span></p></body></html>"))
+                                              "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">时延误差：</span></p></body></html>"))
         self.label_error2.setText(_translate("MainWindow",
-                                              "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">Error_CrossCor：</span></p></body></html>"))
+                                              "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">关联系数误差：</span></p></body></html>"))
 
 
     def str_datetime(self, t):
@@ -336,8 +314,14 @@ class Ui_MainWindow_wind_corr(object):
 
     def show_WindCorrelation(self):
 
+        print('正在分析风电关联模式，请稍后...')
+
         Time_Target = self.str_datetime(self.dateTimeEdit.text())  # 目标时刻点（认为是最近历史时刻）
-        Farm_for_target = int(station_[2:]) - 1
+
+        try:
+            Farm_for_target = int(station_[2:]) - 1
+        except NameError:
+            Farm_for_target = 0
 
 
         ### 各个风电场的位置关系
@@ -370,7 +354,7 @@ class Ui_MainWindow_wind_corr(object):
 
         #####      外部输入参数      #####
         if Farm_for_target == 0: Farm_for_Proceed = [1, 2, 3, 5]  # 用于上下游检测的风电场编号
-        if Farm_for_target == 5: Farm_for_Proceed = [0, 2, 3, 5]  # 用于上下游检测的风电场编号
+        if Farm_for_target == 5: Farm_for_Proceed = [0, 2, 3, 4]  # 用于上下游检测的风电场编号
         Other_Farms = list(range(6))
         del (Other_Farms[Farm_for_target])
 
@@ -391,7 +375,11 @@ class Ui_MainWindow_wind_corr(object):
         Final_Lag = Final_Lag.astype('int')
         Final_CrossCor = Best_of_Farms[np.argmax(Best_of_Farms[:, 1]), 1]
 
-        Sheet = pd.DataFrame([[Final_Farm, Final_CrossCor, Final_Lag]], columns=['关联电场', '关联系数', '超前量'], index=['估计'])
+        Final_Farm_str = '风电'+str(Final_Farm+1)
+
+        Sheet = pd.DataFrame([[Final_Farm_str, Final_CrossCor, Final_Lag]], columns=['关联电场', '关联系数', '超前量'], index=['估计'])
+
+        print('风电关联模式分析完成\n')
 
         self.m.Plot_2(Location, Other_Farms, Farm_for_target, Final_Farm)
 
@@ -399,8 +387,13 @@ class Ui_MainWindow_wind_corr(object):
 
     def WindCorrelation_EVA(self):
         ## 输入 #####
+        print('正在进行风电关联模式误差分析，请稍后...')
         Time_Target = self.str_datetime(self.dateTimeEdit.text())  # 目标时刻点（认为是最近历史时刻）
-        Farm_for_target = int(station_[2:]) - 1
+
+        try:
+            Farm_for_target = int(station_[2:]) - 1
+        except NameError:
+            Farm_for_target = 0
 
         # ------------------  主程序 --------------#
         ### 各个风电场的位置关系
@@ -433,7 +426,7 @@ class Ui_MainWindow_wind_corr(object):
 
         #####      外部输入参数      #####
         if Farm_for_target == 0: Farm_for_Proceed = [1, 2, 3, 5]  # 用于上下游检测的风电场编号
-        if Farm_for_target == 5: Farm_for_Proceed = [0, 2, 3, 5]  # 用于上下游检测的风电场编号
+        if Farm_for_target == 5: Farm_for_Proceed = [0, 2, 3, 4]  # 用于上下游检测的风电场编号
         Other_Farms = list(range(6))
         del (Other_Farms[Farm_for_target])
 
@@ -467,8 +460,15 @@ class Ui_MainWindow_wind_corr(object):
         Error_CrossCor = abs(Final_CrossCor - Real_CrossCor)  # 相关系数的相对误差（相对真实的系数结果）
         Error_CrossCor = format(Error_CrossCor, '.3f')
 
-        Sheet = pd.DataFrame(np.array([[Final_Farm, Final_CrossCor, Final_Lag], [Final_Farm, Real_CrossCor, Real_Lag]]),
+        Final_CrossCor = format(Final_CrossCor, '.2f')
+        Real_CrossCor = format(Real_CrossCor, '.2f')
+
+        Final_Farm_str = '风电' + str(Final_Farm + 1)
+
+        Sheet = pd.DataFrame(np.array([[Final_Farm_str, Final_CrossCor, Final_Lag], [Final_Farm_str, Real_CrossCor, Real_Lag]]),
                              columns=['关联电场', '关联系数', '超前量'], index=['估计', '真实'])
+
+        print('风电关联模式误差分析完成\n')
 
         self.show_table(Sheet)
 
